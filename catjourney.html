@@ -173,7 +173,7 @@
             left: 50%;
             transform: translateX(-50%);
             font-family: "FZYaoTi", "STFZYaoTi", "方正姚体", serif;
-            font-size: 48px;
+            font-size: 32px;
             color: #FF6B6B;
             opacity: 0;
             white-space: nowrap;
@@ -227,7 +227,7 @@
 
         #tabby-tail {
             position: absolute;
-            top: 80.6%;
+            top: 77.6%;
             right: 20%;
             width: 40px;
             height: 20px;
@@ -303,8 +303,8 @@
             position: absolute;
             bottom: 25%;
             right: 9%;
-            width: 140px;
-            height: 250px;
+            width: 120px;
+            height: 200px;
             cursor: pointer;
         }
 
@@ -323,10 +323,8 @@
             left: 50%;
             transform: translate(-50%, -50%) scale(0);
             width: 250px;
-            height: 400px;
-            background: #fff;
+            height: 490px;
             border-radius: 20px;
-            border: 10px solid #333;
             opacity: 0;
             pointer-events: none;
             z-index: 50;
@@ -341,13 +339,11 @@
         .phone-content {
             padding: 20px;
             height: 100%;
-            background: #f0f0f0;
         }
 
         .photo {
             width: 100%;
             height: 200px;
-            background: linear-gradient(to bottom, #87CEEB 0%, #708090 60%);
             margin-bottom: 20px;
             position: relative;
         }
@@ -359,7 +355,6 @@
             transform: translateX(-50%);
             width: 50px;
             height: 50px;
-            fill: #FFA500;
         }
 
         .flash {
@@ -368,7 +363,6 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: #fff;
             opacity: 0;
             pointer-events: none;
             z-index: 60;
@@ -390,94 +384,54 @@
 
         /* Scene 05 - 公园秋千 */
         #scene5 {
-            background: linear-gradient(to bottom, #87CEEB 0%, #90EE90 70%, #228B22 100%);
-        }
-
-        .swing-set {
-            position: absolute;
-            top: 20%;
-            left: 30%;
-            width: 100px;
-            height: 200px;
-        }
-
-        .swing {
-            position: absolute;
-            top: 50px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 80px;
-            transform-origin: top center;
-            animation: swingMove 5s ease-in-out infinite;
-        }
-
-        @keyframes swingMove {
-            0%, 100% { transform: translateX(-50%) rotate(-5deg); }
-            50% { transform: translateX(-50%) rotate(5deg); }
+            background: url('images/park.png') center/cover no-repeat;
+            background-size: 100% 100%;
         }
 
         #bush {
             position: absolute;
-            bottom: 15%;
-            right: 15%;
-            width: 100px;
-            height: 80px;
-            fill: #228B22;
+            bottom: 19%;
+            right: 9%;
+            width: 150px;
+            height: 120px;
             cursor: pointer;
-        }
-
-        #feeder {
-            position: absolute;
-            bottom: 15%;
-            right: 18%;
-            width: 80px;
-            height: 60px;
-            fill: #8B4513;
-            opacity: 0;
-            pointer-events: none;
         }
 
         #cat5 {
             position: absolute;
-            bottom: 20%;
+            bottom: 5%;
             left: 25%;
-            width: 60px;
-            height: 60px;
-            fill: #FFA500;
+            width: 100px;
+            height: 100px;
+            cursor: pointer;
         }
 
-        .food-progress {
+        #feeder5 {
             position: absolute;
-            bottom: 25%;
-            right: 22%;
-            width: 50px;
-            height: 10px;
-            background: #ddd;
-            border-radius: 5px;
-            overflow: hidden;
-            opacity: 0;
+            bottom: 20%;
+            right: 16%;
+            width: 63px;
+            height: 80px;
+            cursor: pointer;
         }
 
-        .food-bar {
-            height: 100%;
-            width: 100%;
-            background: #FFD700;
-            transition: width 0.1s linear;
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
         /* Scene 06 - 房间夕阳 */
         #scene6 {
-            background: linear-gradient(to bottom, #FF6347 0%, #FFD700 30%, #F5F5DC 60%, #DEB887 100%);
+            background: url('images/afterroom.jpg') center/cover no-repeat;
+            background-size: 100% 100%;
         }
 
         #owner {
             position: absolute;
             bottom: 15%;
-            left: 40%;
-            width: 80px;
-            height: 150px;
-            fill: #4169E1;
+            left: 8%;
+            width: 130px;
+            height: 270px;
             cursor: pointer;
         }
 
@@ -1031,17 +985,7 @@
             <img id="expressage" src="images/expressage.png" alt="expressage" />
             
             <div id="phone-screen">
-                <div class="phone-content">
-                    <div class="photo">
-                        <svg class="photo-cat" viewBox="0 0 50 50">
-                            <ellipse cx="25" cy="35" rx="15" ry="12" fill="#FFA500"/>
-                            <circle cx="25" cy="18" r="12" fill="#FFA500"/>
-                            <polygon points="16,10 13,0 21,6" fill="#FFA500"/>
-                            <polygon points="34,10 37,0 29,6" fill="#FFA500"/>
-                        </svg>
-                    </div>
-                    <p style="text-align: center; font-size: 14px;">点击拍照</p>
-                </div>
+                <img src="images/iphoneimage.png" alt="iphone" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;" />
             </div>
             
             <div class="flash" id="flash"></div>
@@ -1054,48 +998,17 @@
 
         <!-- Scene 05: 公园秋千 -->
         <div id="scene5" class="scene">
-            <svg class="swing-set" viewBox="0 0 100 200">
-                <rect x="10" y="0" width="80" height="10" fill="#8B4513"/>
-                <rect x="15" y="0" width="10" height="200" fill="#8B4513"/>
-                <rect x="75" y="0" width="10" height="200" fill="#8B4513"/>
-                <line x1="30" y1="10" x2="30" y2="80" stroke="#8B4513" stroke-width="3"/>
-                <line x1="70" y1="10" x2="70" y2="80" stroke="#8B4513" stroke-width="3"/>
-            </svg>
+            <img id="bush" src="images/grass.png" alt="grass" class="clickable" />
             
-            <svg class="swing" viewBox="0 0 60 80">
-                <line x1="0" y1="0" x2="0" y2="60" stroke="#8B4513" stroke-width="3"/>
-                <line x1="60" y1="0" x2="60" y2="60" stroke="#8B4513" stroke-width="3"/>
-                <rect x="0" y="60" width="60" height="15" fill="#8B4513" rx="3"/>
-            </svg>
-            
-            <svg id="bush" viewBox="0 0 100 80" class="clickable">
-                <ellipse cx="50" cy="50" rx="45" ry="30" fill="#228B22"/>
-                <ellipse cx="30" cy="40" rx="25" ry="20" fill="#32CD32"/>
-                <ellipse cx="70" cy="40" rx="25" ry="20" fill="#32CD32"/>
-                <ellipse cx="50" cy="30" rx="20" ry="15" fill="#228B22"/>
-            </svg>
-            
-            <svg id="feeder" viewBox="0 0 80 60" class="clickable">
-                <rect x="10" y="20" width="60" height="40" fill="#8B4513" rx="5"/>
-                <rect x="15" y="15" width="50" height="10" fill="#A0522D"/>
-                <rect x="25" y="40" width="30" height="15" fill="#654321"/>
-            </svg>
-            
-            <div class="food-progress" id="food-progress">
-                <div class="food-bar" id="food-bar"></div>
-            </div>
-            
-            <svg id="cat5" viewBox="0 0 60 60">
-                <ellipse cx="30" cy="40" rx="18" ry="15" fill="#FFA500"/>
-                <circle cx="30" cy="18" r="15" fill="#FFA500"/>
-                <polygon points="19,10 16,0 24,7" fill="#FFA500"/>
-                <polygon points="41,10 44,0 36,7" fill="#FFA500"/>
-                <circle cx="25" cy="16" r="2" fill="#333"/>
-                <circle cx="35" cy="16" r="2" fill="#333"/>
-                <ellipse cx="30" cy="22" rx="1.5" ry="1" fill="#FF69B4"/>
-            </svg>
+            <img id="cat5" src="images/catbd2.png" alt="cat5" />
             
             <div class="guide-arrow" id="guide5" style="bottom: 25%; right: 20%;">→ 点击草丛</div>
+            
+            <div class="drag-arrow" id="drag-arrow5" style="display: none;">拖动小猫</div>
+            
+            <div id="target-arrow5" style="display: none; position: absolute; bottom: 19%; right: 12%; font-size: 40px; color: #FFD700; animation: bounce 1s infinite;">↓</div>
+            
+            <img id="feeder5" src="images/weimq.png" alt="feeder5s" class="clickable" />
             
             <div class="next-arrow" id="next5">↓</div>
         </div>
@@ -1105,12 +1018,7 @@
             <div class="curtain" style="left: auto; right: 8%; width: 180px; height: 220px;"></div>
             <div id="window6"></div>
             
-            <svg id="owner" viewBox="0 0 80 150" class="clickable">
-                <rect x="20" y="50" width="40" height="70" fill="#4169E1" rx="5"/>
-                <circle cx="40" cy="30" r="25" fill="#FFDAB9"/>
-                <rect x="25" y="120" width="12" height="30" fill="#2F4F4F"/>
-                <rect x="43" y="120" width="12" height="30" fill="#2F4F4F"/>
-            </svg>
+            <img id="owner" src="images/master1.png" alt="owner" class="clickable" />
             
             <div class="text-bubble" id="bubble-mimi" style="top: 30%; left: 45%;">咪咪</div>
             <div class="text-bubble" id="bubble-no-response" style="top: 25%; left: 50%; background: #f0f0f0; padding: 8px 12px; font-size: 14px;">没有回应</div>
@@ -1737,124 +1645,93 @@
         // Scene 5: 公园秋千
         function initScene5() {
             const bush = document.getElementById('bush');
-            const feeder = document.getElementById('feeder');
             const cat = document.getElementById('cat5');
-            const foodProgress = document.getElementById('food-progress');
-            const foodBar = document.getElementById('food-bar');
             const guide5 = document.getElementById('guide5');
+            const dragArrow5 = document.getElementById('drag-arrow5');
+            const targetArrow5 = document.getElementById('target-arrow5');
+            const feeder5 = document.getElementById('feeder5');
             const next5 = document.getElementById('next5');
             
             // 重置状态
             gsap.set(bush, { opacity: 1 });
-            gsap.set(feeder, { opacity: 0, scale: 0 });
-            gsap.set(cat, { x: 0 });
-            gsap.set(foodProgress, { opacity: 0 });
-            gsap.set(foodBar, { width: '100%' });
+            gsap.set(cat, { x: 0, y: 0, bottom: '5%', left: '25%' });
+            gsap.set(feeder5, { opacity: 0 });
+            dragArrow5.style.display = 'none';
+            targetArrow5.style.display = 'none';
+            feeder5.style.display = 'none';
             guide5.classList.add('visible');
             next5.classList.remove('visible');
             
-            let feederRevealed = false;
-            let catMoved = false;
-            let feeding = false;
+            let bushClicked = false;
+            let catDragged = false;
+            let feederClicked = false;
             
             // 草丛点击事件
             bush.addEventListener('click', () => {
-                if (feederRevealed) return;
-                feederRevealed = true;
+                if (bushClicked) return;
+                bushClicked = true;
                 guide5.classList.remove('visible');
                 
-                // 草丛消失，喂猫器出现
+                // 草丛消失
                 gsap.to(bush, {
                     autoAlpha: 0,
                     duration: 0.5,
                     onComplete: () => {
-                        gsap.to(feeder, {
-                            autoAlpha: 1,
-                            scale: 1,
-                            duration: 0.5,
-                            ease: "back.out(1.7)"
+                        // 显示拖动提示
+                        dragArrow5.style.display = 'block';
+                        dragArrow5.classList.add('visible');
+                        
+                        // 显示目标位置箭头
+                        targetArrow5.style.display = 'block';
+                        
+                        // 初始化小猫拖拽
+                        Draggable.create(cat, {
+                            type: "x,y",
+                            bounds: "#scene5",
+                            onDragEnd: function() {
+                                // 检查小猫是否拖动到目标位置附近
+                                const catRect = cat.getBoundingClientRect();
+                                const sceneRect = document.getElementById('scene5').getBoundingClientRect();
+                                
+                                // 计算小猫相对于场景的位置
+                                const catBottom = ((sceneRect.bottom - catRect.bottom) / sceneRect.height) * 100;
+                                const catRight = ((sceneRect.right - catRect.right) / sceneRect.width) * 100;
+                                
+                                // 检查是否在目标位置附近（允许一定误差）
+                                if (Math.abs(catBottom - 19) < 5 && Math.abs(catRight - 12) < 5) {
+                                    catDragged = true;
+                                    dragArrow5.classList.remove('visible');
+                                    dragArrow5.style.display = 'none';
+                                    targetArrow5.style.display = 'none';
+                                    
+                                    // 1秒后喂食器自动出现
+                                    setTimeout(() => {
+                                        feeder5.style.display = 'block';
+                                        gsap.to(feeder5, {
+                                            opacity: 1,
+                                            duration: 0.5,
+                                            ease: "back.out(1.7)"
+                                        });
+                                    }, 1000);
+                                }
+                            }
                         });
                     }
                 });
             });
             
-            // 滑动小猫到喂猫器前
-            const touchStartHandler = (e) => {
-                if (!feederRevealed || catMoved) return;
-                touchStartX = e.touches ? e.touches[0].clientX : e.clientX;
-            };
-            
-            const touchMoveHandler = (e) => {
-                if (!feederRevealed || catMoved) return;
+            // 喂食器点击事件
+            feeder5.addEventListener('click', () => {
+                if (!catDragged || feederClicked) return;
+                feederClicked = true;
                 
-                const currentX = e.touches ? e.touches[0].clientX : e.clientX;
-                const deltaX = currentX - touchStartX;
+                // 小猫切换图片为catbd1.png
+                cat.src = 'images/catbd1.png';
                 
-                if (deltaX > 50) {
-                    catMoved = true;
-                    
-                    // 小猫移动到喂猫器前
-                    gsap.to(cat, {
-                        x: window.innerWidth * 0.5,
-                        duration: 0.8,
-                        ease: "power2.out"
-                    });
-                    
-                    document.removeEventListener('touchstart', touchStartHandler);
-                    document.removeEventListener('touchmove', touchMoveHandler);
-                }
-            };
-            
-            document.addEventListener('touchstart', touchStartHandler);
-            document.addEventListener('touchmove', touchMoveHandler);
-            
-            // 喂猫器点击事件
-            feeder.addEventListener('click', () => {
-                if (!catMoved || feeding) return;
-                feeding = true;
-                
-                // 显示食物进度条
-                gsap.to(foodProgress, {
-                    opacity: 1,
-                    duration: 0.3
-                });
-                
-                // 小猫低头吃食
-                gsap.to(cat, {
-                    scaleY: 0.8,
-                    transformOrigin: "bottom center",
-                    duration: 0.3,
-                    repeat: -1,
-                    yoyo: true,
-                    ease: "sine.inOut"
-                });
-                
-                // 食物减少动画
-                let foodWidth = 100;
-                const foodInterval = setInterval(() => {
-                    foodWidth -= 2;
-                    foodBar.style.width = `${foodWidth}%`;
-                    
-                    if (foodWidth <= 0) {
-                        clearInterval(foodInterval);
-                        
-                        // 停止吃食动画
-                        gsap.killTweensOf(cat);
-                        gsap.to(cat, {
-                            scaleY: 1,
-                            duration: 0.3
-                        });
-                        
-                        // 隐藏进度条
-                        gsap.to(foodProgress, {
-                            opacity: 0,
-                            duration: 0.3
-                        });
-                        
-                        // 解锁下一页
-                        next5.classList.add('visible');
-                    }
-                }, 100);
+                // 1秒后弹出下一页箭头
+                setTimeout(() => {
+                    next5.classList.add('visible');
+                }, 1000);
             });
             
             // 下一页箭头
