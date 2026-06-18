@@ -1,0 +1,2429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>猫咪探险之旅</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/MotionPathPlugin.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/Draggable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/TextPlugin.min.js"></script>
+    <script>
+        // 检测是否为移动端
+        function isMobile() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+        
+        // 如果不是移动端，显示提示并隐藏内容
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!isMobile()) {
+                document.body.innerHTML = '<div style="display: flex; justify-content: center; align-items: center; height: 100vh; background: #000; color: #fff; font-size: 18px; text-align: center; padding: 20px;">本页面仅支持在移动端查看，请使用手机访问</div>';
+            }
+        });
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            touch-action: manipulation;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        body {
+            overflow: hidden;
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: #000;
+        }
+
+        #game-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scene {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .scene.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* 通用元素样式 */
+        .clickable {
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .clickable:hover {
+            transform: scale(1.05);
+        }
+
+        .next-arrow {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 100;
+            animation: bounce 1s infinite;
+        }
+
+        .next-arrow.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* Scene 01 - 天空窗户背景 */
+        #scene1 {
+            background: url('images/skywindow.jpg') no-repeat center center;
+            background-size: cover;
+        }
+
+        .cloud {
+            position: absolute;
+            fill: #fff;
+            opacity: 0.9;
+            animation: cloudMove 60s linear infinite;
+        }
+
+        .cloud:nth-child(2) {
+            top: 15%;
+            left: 20%;
+            animation-duration: 80s;
+        }
+
+        .cloud:nth-child(3) {
+            top: 25%;
+            left: 60%;
+            animation-duration: 100s;
+        }
+        .cloud:nth-child(4) {
+            top: 8%;
+            left: 75%;
+            animation-duration: 120s;
+        }
+
+        @keyframes cloudMove {
+            0% { transform: translateX(-100px); }
+            100% { transform: translateX(calc(100vw + 100px)); }
+        }
+
+        #butterfly1 {
+            position: absolute;
+            width: 9%;
+            height: 5.7%;
+            z-index: 10;
+            object-fit: contain;
+        }
+
+        #cat-paw {
+            position: absolute;
+            bottom: 7.5%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30%;
+            height: 12.3%;
+            fill: #FF6B6B;
+            opacity: 0;
+        }
+
+        #cat-paw.visible {
+            opacity: 1;
+            pointer-events: auto;
+            animation: pulse 2s infinite;
+        }
+
+        #title-text {
+            position: absolute;
+            bottom: 20.8%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: "FZYaoTi", "STFZYaoTi", "方正姚体", serif;
+            font-size: 48px;
+            color: #FF6B6B;
+            opacity: 0;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        /* Scene 02 - 客厅 */
+        #scene2 {
+            background: url('images/morningroom.jpg') center/cover no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .living-room {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        #cat2 {
+            position: absolute;
+            top: 81.9%;
+            left: 0%;
+            width: 23%;
+            height: 12.4%;
+        }
+
+        #butterfly2 {
+            position: absolute;
+            top: 77.9%;
+            left: 66.3%;
+            width: 10.4%;
+            height: 6.1%;
+            z-index: 10;
+        }
+
+        /* Scene 03 - 草地 */
+        #scene3 {
+            background: url('images/cdcj.png') center/cover no-repeat;
+            background-size: 100% 100%;
+        }
+
+        
+
+        #cat-main {
+            position: absolute;
+            top: 80.6%;
+            left: 15%;
+            width: 70px;
+            height: 70px;
+        }
+
+        #tabby-tail {
+            position: absolute;
+            top: 80.6%;
+            right: 20%;
+            width: 40px;
+            height: 20px;
+            transform-origin: left center;
+            animation: tailWag 2s ease-in-out infinite;
+            cursor: pointer;
+        }
+
+        @keyframes tailWag {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+        }
+
+        #tabby-cat {
+            position: absolute;
+            top: 80.6%;
+            right: 15%;
+            width: 70px;
+            height: 70px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #ball {
+            position: absolute;
+            top: 56.3%;
+            left: 67.2%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 30px;
+            background: url('images/ball.png') center/cover no-repeat;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 20;
+        }
+
+        #ball.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .drag-arrow {
+            position: absolute;
+            bottom: 28%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 20px;
+            color: #fff;
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+            opacity: 0;
+            animation: float 1s infinite;
+        }
+
+        .drag-arrow.visible {
+            opacity: 1;
+        }
+
+        /* Scene 04 - 快递柜 */
+        #scene4 {
+            background: url('images/kdg.png') center/cover no-repeat;
+            background-size: 100% 100%;
+        }
+
+        #cat-floor {
+            position: absolute;
+            bottom: 22%;
+            left: 10%;
+            width: 120px;
+            height: 150px;
+        }
+
+        #man-phone {
+            position: absolute;
+            bottom: 25%;
+            right: 9%;
+            width: 140px;
+            height: 250px;
+            cursor: pointer;
+        }
+
+        #expressage {
+            position: absolute;
+            bottom: 15%;
+            right: 20%;
+            width: 150px;
+            height: 160px;
+            z-index: 5;
+        }
+
+        #phone-screen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 250px;
+            height: 400px;
+            background: #fff;
+            border-radius: 20px;
+            border: 10px solid #333;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 50;
+            overflow: hidden;
+        }
+
+        #phone-screen.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .phone-content {
+            padding: 20px;
+            height: 100%;
+            background: #f0f0f0;
+        }
+
+        .photo {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(to bottom, #87CEEB 0%, #708090 60%);
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .photo-cat {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 50px;
+            fill: #FFA500;
+        }
+
+        .flash {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #fff;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 60;
+        }
+
+        .save-toast {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 20px;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 70;
+        }
+
+        /* Scene 05 - 公园秋千 */
+        #scene5 {
+            background: linear-gradient(to bottom, #87CEEB 0%, #90EE90 70%, #228B22 100%);
+        }
+
+        .swing-set {
+            position: absolute;
+            top: 20%;
+            left: 30%;
+            width: 100px;
+            height: 200px;
+        }
+
+        .swing {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 80px;
+            transform-origin: top center;
+            animation: swingMove 5s ease-in-out infinite;
+        }
+
+        @keyframes swingMove {
+            0%, 100% { transform: translateX(-50%) rotate(-5deg); }
+            50% { transform: translateX(-50%) rotate(5deg); }
+        }
+
+        #bush {
+            position: absolute;
+            bottom: 15%;
+            right: 15%;
+            width: 100px;
+            height: 80px;
+            fill: #228B22;
+            cursor: pointer;
+        }
+
+        #feeder {
+            position: absolute;
+            bottom: 15%;
+            right: 18%;
+            width: 80px;
+            height: 60px;
+            fill: #8B4513;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #cat5 {
+            position: absolute;
+            bottom: 20%;
+            left: 25%;
+            width: 60px;
+            height: 60px;
+            fill: #FFA500;
+        }
+
+        .food-progress {
+            position: absolute;
+            bottom: 25%;
+            right: 22%;
+            width: 50px;
+            height: 10px;
+            background: #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+            opacity: 0;
+        }
+
+        .food-bar {
+            height: 100%;
+            width: 100%;
+            background: #FFD700;
+            transition: width 0.1s linear;
+        }
+
+        /* Scene 06 - 房间夕阳 */
+        #scene6 {
+            background: linear-gradient(to bottom, #FF6347 0%, #FFD700 30%, #F5F5DC 60%, #DEB887 100%);
+        }
+
+        #owner {
+            position: absolute;
+            bottom: 15%;
+            left: 40%;
+            width: 80px;
+            height: 150px;
+            fill: #4169E1;
+            cursor: pointer;
+        }
+
+        .text-bubble {
+            position: absolute;
+            background: #fff;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 16px;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .text-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 20px;
+            border-width: 10px 10px 0;
+            border-style: solid;
+            border-color: #fff transparent transparent;
+        }
+
+        #window6 {
+            position: absolute;
+            top: 15%;
+            right: 10%;
+            width: 150px;
+            height: 200px;
+            background: linear-gradient(to bottom, #FF6347 0%, #FFD700 100%);
+            border: 8px solid #8B4513;
+            cursor: pointer;
+        }
+
+        #paw-print-window {
+            position: absolute;
+            top: 50%;
+            right: 15%;
+            width: 40px;
+            height: 40px;
+            fill: #8B4513;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Scene 07 - 寻猫启事 */
+        #scene7 {
+            background: linear-gradient(to bottom, #87CEEB 0%, #D3D3D3 70%, #A9A9A9 100%);
+        }
+
+        .pole {
+            position: absolute;
+            bottom: 0;
+            left: 40%;
+            width: 20px;
+            height: 100%;
+            background: #808080;
+        }
+
+        #lost-notice {
+            position: absolute;
+            top: 30%;
+            left: 35%;
+            width: 150px;
+            height: 200px;
+            background: #fff;
+            border: 2px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            transform-origin: top left;
+            animation: noticeWave 5s ease-in-out infinite;
+        }
+
+        @keyframes noticeWave {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(1deg); }
+        }
+
+        .notice-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #FF0000;
+            margin-bottom: 10px;
+        }
+
+        .notice-cat {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 10px;
+            background: #FFA500;
+            border-radius: 10px;
+        }
+
+        #delivery-man {
+            position: absolute;
+            bottom: 10%;
+            right: 25%;
+            width: 70px;
+            height: 130px;
+            fill: #006400;
+            cursor: pointer;
+        }
+
+        #chat-screen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 280px;
+            height: 450px;
+            background: #fff;
+            border-radius: 20px;
+            border: 10px solid #333;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 50;
+            overflow: hidden;
+        }
+
+        #chat-screen.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .chat-header {
+            background: #07C160;
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .chat-messages {
+            height: 320px;
+            padding: 15px;
+            background: #f5f5f5;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            opacity: 0;
+        }
+
+        .message.received {
+            text-align: left;
+        }
+
+        .message.sent {
+            text-align: right;
+        }
+
+        .message-bubble {
+            display: inline-block;
+            padding: 10px 15px;
+            border-radius: 15px;
+            max-width: 80%;
+        }
+
+        .message.received .message-bubble {
+            background: #fff;
+        }
+
+        .message.sent .message-bubble {
+            background: #95EC69;
+        }
+
+        /* Scene 08 - 楼道 */
+        #scene8 {
+            background: linear-gradient(to bottom, #2F4F4F 0%, #696969 100%);
+        }
+
+        .staircase {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: linear-gradient(135deg, #808080 25%, transparent 25%) -50px 0,
+                        linear-gradient(225deg, #808080 25%, transparent 25%) -50px 0,
+                        linear-gradient(315deg, #808080 25%, transparent 25%),
+                        linear-gradient(45deg, #808080 25%, transparent 25%);
+            background-size: 100px 100px;
+            background-color: #696969;
+        }
+
+        .light {
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: #FFD700;
+            border-radius: 50%;
+            box-shadow: 0 0 50px #FFD700;
+            animation: lightFlicker 3s infinite;
+        }
+
+        @keyframes lightFlicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+            90% { opacity: 0.9; }
+        }
+
+        #cat8 {
+            position: absolute;
+            bottom: 15%;
+            left: 20%;
+            width: 50px;
+            height: 50px;
+            fill: #FFA500;
+        }
+
+        .cat-tail {
+            position: absolute;
+            bottom: 20%;
+            left: 15%;
+            width: 30px;
+            height: 10px;
+            fill: #FFA500;
+            transform-origin: left center;
+            animation: tailWag 2s ease-in-out infinite;
+        }
+
+        #owner-view {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 20;
+        }
+
+        #owner-view.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .right-arrow {
+            position: absolute;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 30px;
+            color: #fff;
+            opacity: 0;
+            pointer-events: none;
+            animation: bounceRight 1s infinite;
+        }
+
+        .right-arrow.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        @keyframes bounceRight {
+            0%, 100% { transform: translateY(-50%) translateX(0); }
+            50% { transform: translateY(-50%) translateX(10px); }
+        }
+
+        #owner8 {
+            position: absolute;
+            bottom: 20%;
+            right: 30%;
+            width: 80px;
+            height: 150px;
+            fill: #4169E1;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Scene 09 - 温馨结局 */
+        #scene9 {
+            background: linear-gradient(to bottom, #191970 0%, #2F4F4F 100%);
+        }
+
+        .chandelier {
+            position: absolute;
+            top: 5%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 60px;
+            background: #FFD700;
+            border-radius: 0 0 50% 50%;
+            box-shadow: 0 50px 100px rgba(255,215,0,0.5);
+        }
+
+        .sofa {
+            position: absolute;
+            bottom: 15%;
+            right: 10%;
+            width: 200px;
+            height: 100px;
+            background: #8B0000;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .sofa::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background: #A52A2A;
+            border-radius: 10px 10px 0 0;
+        }
+
+        #owner9 {
+            position: absolute;
+            bottom: 20%;
+            right: 25%;
+            width: 70px;
+            height: 120px;
+            fill: #4169E1;
+        }
+
+        #cat9 {
+            position: absolute;
+            bottom: 18%;
+            left: 15%;
+            width: 50px;
+            height: 50px;
+            fill: #FFA500;
+            cursor: pointer;
+        }
+
+        .food-bowl {
+            position: absolute;
+            bottom: 15%;
+            left: 10%;
+            width: 60px;
+            height: 30px;
+            background: #C0C0C0;
+            border-radius: 0 0 30px 30px;
+        }
+
+        .food {
+            position: absolute;
+            bottom: 20px;
+            left: 10px;
+            right: 10px;
+            height: 15px;
+            background: #FFD700;
+            border-radius: 5px;
+        }
+
+        .leaf {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            fill: #228B22;
+        }
+
+        .leaf:nth-child(1) { bottom: 20%; left: 25%; }
+        .leaf:nth-child(2) { bottom: 22%; left: 30%; }
+        .leaf:nth-child(3) { bottom: 18%; left: 35%; }
+
+        #hand-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            fill: #fff;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 30;
+            animation: pulse 1.5s infinite;
+        }
+
+        #hand-icon.visible {
+            opacity: 0.7;
+            pointer-events: auto;
+        }
+
+        .long-press-text {
+            position: absolute;
+            top: calc(50% + 40px);
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            font-size: 14px;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 30;
+        }
+
+        .long-press-text.visible {
+            opacity: 1;
+        }
+
+        #owner-arm {
+            position: absolute;
+            bottom: 35%;
+            right: 30%;
+            width: 60px;
+            height: 20px;
+            fill: #FFDAB9;
+            transform-origin: right center;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .ending-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #000;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ending-paw {
+            width: 80px;
+            height: 80px;
+            fill: #FF6B6B;
+            margin-bottom: 20px;
+        }
+
+        .ending-text {
+            color: #fff;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        /* 引导箭头 */
+        .guide-arrow {
+            position: absolute;
+            font-size: 24px;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(0,0,0,0.7);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 50;
+            animation: float 1s infinite;
+        }
+
+        .guide-arrow.visible {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <!-- Scene 01: 蓝天白云 -->
+        <div id="scene1" class="scene active">
+            <svg class="cloud" viewBox="0 0 100 60" width="110" height="66">
+                <ellipse cx="50" cy="45" rx="45" ry="14" />
+                <circle cx="25" cy="34" r="17" />
+                <circle cx="40" cy="26" r="16" />
+                <circle cx="60" cy="26" r="16" />
+                <circle cx="75" cy="34" r="17" />
+                <circle cx="50" cy="18" r="13" />
+            </svg>
+            <svg class="cloud" viewBox="0 0 100 60" width="80" height="48">
+                <ellipse cx="50" cy="45" rx="42" ry="14" />
+                <circle cx="30" cy="34" r="18" />
+                <circle cx="70" cy="34" r="18" />
+                <circle cx="50" cy="25" r="15" />
+            </svg>
+            <svg class="cloud" viewBox="0 0 100 60" width="120" height="72">
+                <ellipse cx="50" cy="48" rx="48" ry="16" />
+                <circle cx="18" cy="38" r="14" />
+                <circle cx="32" cy="30" r="19" />
+                <circle cx="45" cy="22" r="16" />
+                <circle cx="58" cy="22" r="16" />
+                <circle cx="74" cy="30" r="19" />
+                <circle cx="86" cy="38" r="14" />
+                <circle cx="50" cy="15" r="12" />
+            </svg>
+            <svg class="cloud" viewBox="0 0 100 60" width="130" height="60">
+                <ellipse cx="50" cy="48" rx="50" ry="12" />
+                <circle cx="22" cy="40" r="12" />
+                <circle cx="35" cy="32" r="16" />
+                <circle cx="65" cy="28" r="20" />
+                <circle cx="80" cy="38" r="14" />
+                <circle cx="50" cy="22" r="10" />
+            </svg>
+            <img id="butterfly1" src="images/butterfly1.svg" alt="butterfly" />
+            <svg id="cat-paw" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg" class="clickable">
+                <path d="M 250,270 C 200,270 160,310 160,350 C 160,380 190,400 220,380 C 235,370 245,365 250,375 C 255,365 265,370 280,380 C 310,400 340,380 340,350 C 340,310 300,270 250,270 Z" />
+                <ellipse cx="130" cy="265" rx="34" ry="45" transform="rotate(-22 130 265)"/>
+                <ellipse cx="210" cy="190" rx="37" ry="48" transform="rotate(-10 210 190)"/>
+                <ellipse cx="310" cy="190" rx="37" ry="48" transform="rotate(10 310 190)"/>
+                <ellipse cx="370" cy="265" rx="34" ry="45" transform="rotate(22 370 265)"/>
+            </svg>
+            
+            <div id="title-text" class="title-text">猫咪的探险之旅</div>
+            
+            <div class="next-arrow" id="next1">↓</div>
+        </div>
+
+        <!-- Scene 02: 客厅 -->
+        <div id="scene2" class="scene">
+            <div class="living-room">
+                <img id="cat2" src="images/catback.png" alt="cat" class="clickable" />
+                
+                <img id="butterfly2" src="images/butterfly2.png" alt="butterfly" />
+            </div>
+            
+            <div class="next-arrow" id="next2">↓</div>
+        </div>
+
+        <!-- Scene 03: 草地 -->
+        <div id="scene3" class="scene">
+            <div class="grass">
+                <div class="grass-blade" style="left: 10%; animation-delay: 0s;"></div>
+                <div class="grass-blade" style="left: 20%; animation-delay: 0.5s;"></div>
+                <div class="grass-blade" style="left: 30%; animation-delay: 1s;"></div>
+                <div class="grass-blade" style="left: 40%; animation-delay: 1.5s;"></div>
+                <div class="grass-blade" style="left: 50%; animation-delay: 0.3s;"></div>
+                <div class="grass-blade" style="left: 60%; animation-delay: 0.8s;"></div>
+                <div class="grass-blade" style="left: 70%; animation-delay: 1.2s;"></div>
+                <div class="grass-blade" style="left: 80%; animation-delay: 0.6s;"></div>
+                <div class="grass-blade" style="left: 90%; animation-delay: 1.8s;"></div>
+            </div>
+            
+            <img id="cat-main" src="images/catbd1.png" alt="cat-main" />
+            
+            <img id="tabby-tail" src="images/shwb.svg" alt="tabby-tail" />
+            
+            <img id="tabby-cat" src="images/shrun.png" alt="tabby-cat" class="clickable" />
+            
+            <div id="ball" class="clickable"></div>
+            <div class="drag-arrow" id="drag-arrow3">↑ 拖动小球</div>
+            
+            <div class="next-arrow" id="next3">↓</div>
+        </div>
+
+        <!-- Scene 04: 快递柜 -->
+        <div id="scene4" class="scene">
+            <img id="cat-floor" src="images/catpre.png" alt="cat-floor" />
+            
+            <img id="man-phone" src="images/delivery.png" alt="delivery" class="clickable" />
+            
+            <img id="expressage" src="images/expressage.png" alt="expressage" />
+            
+            <div id="phone-screen">
+                <div class="phone-content">
+                    <div class="photo">
+                        <svg class="photo-cat" viewBox="0 0 50 50">
+                            <ellipse cx="25" cy="35" rx="15" ry="12" fill="#FFA500"/>
+                            <circle cx="25" cy="18" r="12" fill="#FFA500"/>
+                            <polygon points="16,10 13,0 21,6" fill="#FFA500"/>
+                            <polygon points="34,10 37,0 29,6" fill="#FFA500"/>
+                        </svg>
+                    </div>
+                    <p style="text-align: center; font-size: 14px;">点击拍照</p>
+                </div>
+            </div>
+            
+            <div class="flash" id="flash"></div>
+            <div class="save-toast" id="save-toast">照片已保存</div>
+            
+            <div class="guide-arrow" id="guide4" style="bottom: 25%; left: 15%;">↑ 滑动小猫</div>
+            
+            <div class="next-arrow" id="next4">↓</div>
+        </div>
+
+        <!-- Scene 05: 公园秋千 -->
+        <div id="scene5" class="scene">
+            <svg class="swing-set" viewBox="0 0 100 200">
+                <rect x="10" y="0" width="80" height="10" fill="#8B4513"/>
+                <rect x="15" y="0" width="10" height="200" fill="#8B4513"/>
+                <rect x="75" y="0" width="10" height="200" fill="#8B4513"/>
+                <line x1="30" y1="10" x2="30" y2="80" stroke="#8B4513" stroke-width="3"/>
+                <line x1="70" y1="10" x2="70" y2="80" stroke="#8B4513" stroke-width="3"/>
+            </svg>
+            
+            <svg class="swing" viewBox="0 0 60 80">
+                <line x1="0" y1="0" x2="0" y2="60" stroke="#8B4513" stroke-width="3"/>
+                <line x1="60" y1="0" x2="60" y2="60" stroke="#8B4513" stroke-width="3"/>
+                <rect x="0" y="60" width="60" height="15" fill="#8B4513" rx="3"/>
+            </svg>
+            
+            <svg id="bush" viewBox="0 0 100 80" class="clickable">
+                <ellipse cx="50" cy="50" rx="45" ry="30" fill="#228B22"/>
+                <ellipse cx="30" cy="40" rx="25" ry="20" fill="#32CD32"/>
+                <ellipse cx="70" cy="40" rx="25" ry="20" fill="#32CD32"/>
+                <ellipse cx="50" cy="30" rx="20" ry="15" fill="#228B22"/>
+            </svg>
+            
+            <svg id="feeder" viewBox="0 0 80 60" class="clickable">
+                <rect x="10" y="20" width="60" height="40" fill="#8B4513" rx="5"/>
+                <rect x="15" y="15" width="50" height="10" fill="#A0522D"/>
+                <rect x="25" y="40" width="30" height="15" fill="#654321"/>
+            </svg>
+            
+            <div class="food-progress" id="food-progress">
+                <div class="food-bar" id="food-bar"></div>
+            </div>
+            
+            <svg id="cat5" viewBox="0 0 60 60">
+                <ellipse cx="30" cy="40" rx="18" ry="15" fill="#FFA500"/>
+                <circle cx="30" cy="18" r="15" fill="#FFA500"/>
+                <polygon points="19,10 16,0 24,7" fill="#FFA500"/>
+                <polygon points="41,10 44,0 36,7" fill="#FFA500"/>
+                <circle cx="25" cy="16" r="2" fill="#333"/>
+                <circle cx="35" cy="16" r="2" fill="#333"/>
+                <ellipse cx="30" cy="22" rx="1.5" ry="1" fill="#FF69B4"/>
+            </svg>
+            
+            <div class="guide-arrow" id="guide5" style="bottom: 25%; right: 20%;">→ 点击草丛</div>
+            
+            <div class="next-arrow" id="next5">↓</div>
+        </div>
+
+        <!-- Scene 06: 房间夕阳 -->
+        <div id="scene6" class="scene">
+            <div class="curtain" style="left: auto; right: 8%; width: 180px; height: 220px;"></div>
+            <div id="window6"></div>
+            
+            <svg id="owner" viewBox="0 0 80 150" class="clickable">
+                <rect x="20" y="50" width="40" height="70" fill="#4169E1" rx="5"/>
+                <circle cx="40" cy="30" r="25" fill="#FFDAB9"/>
+                <rect x="25" y="120" width="12" height="30" fill="#2F4F4F"/>
+                <rect x="43" y="120" width="12" height="30" fill="#2F4F4F"/>
+            </svg>
+            
+            <div class="text-bubble" id="bubble-mimi" style="top: 30%; left: 45%;">咪咪</div>
+            <div class="text-bubble" id="bubble-no-response" style="top: 25%; left: 50%; background: #f0f0f0; padding: 8px 12px; font-size: 14px;">没有回应</div>
+            
+            <svg id="paw-print-window" viewBox="0 0 40 40">
+                <ellipse cx="20" cy="28" rx="12" ry="9"/>
+                <circle cx="10" cy="18" r="4"/>
+                <circle cx="20" cy="14" r="4"/>
+                <circle cx="30" cy="18" r="4"/>
+                <circle cx="15" cy="10" r="3"/>
+                <circle cx="25" cy="10" r="3"/>
+            </svg>
+            
+            <div class="guide-arrow" id="guide6" style="top: 35%; right: 15%; opacity: 0;">→ 点击窗户</div>
+            
+            <div class="next-arrow" id="next6">↓</div>
+        </div>
+
+        <!-- Scene 07: 寻猫启事 -->
+        <div id="scene7" class="scene">
+            <div class="pole"></div>
+            
+            <div id="lost-notice">
+                <div class="notice-title">寻猫启事</div>
+                <div class="notice-cat"></div>
+                <p style="font-size: 12px; margin-bottom: 5px;">橘猫，名叫咪咪</p>
+                <p style="font-size: 12px; margin-bottom: 5px;">走失于XX小区</p>
+                <p style="font-size: 12px; color: #FF0000;">联系电话：138****8888</p>
+            </div>
+            
+            <svg id="delivery-man" viewBox="0 0 70 130" class="clickable">
+                <rect x="15" y="40" width="40" height="50" fill="#006400" rx="3"/>
+                <circle cx="35" cy="25" r="18" fill="#FFDAB9"/>
+                <rect x="10" y="0" width="50" height="15" fill="#FFD700" rx="3"/>
+                <rect x="20" y="90" width="12" height="40" fill="#2F4F4F"/>
+                <rect x="38" y="90" width="12" height="40" fill="#2F4F4F"/>
+                <rect x="50" y="50" width="15" height="25" fill="#333" rx="2"/>
+            </svg>
+            
+            <div id="chat-screen">
+                <div class="chat-header">与快递小哥的聊天</div>
+                <div class="chat-messages">
+                    <div class="message received" id="msg1">
+                        <div class="message-bubble">我在快递柜看到过你的小猫</div>
+                    </div>
+                    <div class="message sent" id="msg2">
+                        <div class="message-bubble">谢谢！我马上过去</div>
+                    </div>
+                </div>
+                <div style="text-align: center; padding: 10px; background: #f0f0f0; font-size: 12px; color: #666;">
+                    点击关闭
+                </div>
+            </div>
+            
+            <div class="next-arrow" id="next7">↓</div>
+        </div>
+
+        <!-- Scene 08: 楼道 -->
+        <div id="scene8" class="scene">
+            <div class="staircase"></div>
+            <div class="light"></div>
+            
+            <svg id="cat8" viewBox="0 0 50 50">
+                <ellipse cx="25" cy="35" rx="15" ry="12" fill="#FFA500"/>
+                <circle cx="25" cy="16" r="12" fill="#FFA500"/>
+                <polygon points="16,8 13,0 21,5" fill="#FFA500"/>
+                <polygon points="34,8 37,0 29,5" fill="#FFA500"/>
+                <circle cx="21" cy="14" r="2" fill="#333"/>
+                <circle cx="29" cy="14" r="2" fill="#333"/>
+                <ellipse cx="25" cy="20" rx="1.5" ry="1" fill="#FF69B4"/>
+            </svg>
+            
+            <svg class="cat-tail" viewBox="0 0 30 10">
+                <path d="M0,5 Q15,0 30,5 Q15,10 0,5" fill="#FFA500"/>
+            </svg>
+            
+            <div id="owner-view">
+                <div class="text-bubble" id="bubble-meow" style="top: 40%; right: 30%; background: #fff; padding: 8px 12px;">喵~</div>
+                <div class="right-arrow" id="right-arrow">→</div>
+            </div>
+            
+            <svg id="owner8" viewBox="0 0 80 150">
+                <rect x="20" y="50" width="40" height="70" fill="#4169E1" rx="5"/>
+                <circle cx="40" cy="30" r="25" fill="#FFDAB9"/>
+                <rect x="25" y="120" width="12" height="30" fill="#2F4F4F"/>
+                <rect x="43" y="120" width="12" height="30" fill="#2F4F4F"/>
+            </svg>
+            
+            <div class="guide-arrow" id="guide8" style="bottom: 25%; left: 25%;">↑ 向上滑动</div>
+            
+            <div class="next-arrow" id="next8">↓</div>
+        </div>
+
+        <!-- Scene 09: 温馨结局 -->
+        <div id="scene9" class="scene">
+            <div class="chandelier"></div>
+            <div class="sofa"></div>
+            
+            <svg id="owner9" viewBox="0 0 70 120">
+                <rect x="15" y="40" width="40" height="55" fill="#4169E1" rx="5"/>
+                <circle cx="35" cy="22" r="20" fill="#FFDAB9"/>
+                <rect x="20" y="95" width="10" height="25" fill="#2F4F4F"/>
+                <rect x="40" y="95" width="10" height="25" fill="#2F4F4F"/>
+            </svg>
+            
+            <svg id="owner-arm" viewBox="0 0 60 20">
+                <ellipse cx="30" cy="10" rx="30" ry="10" fill="#FFDAB9"/>
+            </svg>
+            
+            <div class="food-bowl">
+                <div class="food"></div>
+            </div>
+            
+            <svg class="leaf" viewBox="0 0 15 15">
+                <path d="M7.5,0 Q15,7.5 7.5,15 Q0,7.5 7.5,0" fill="#228B22"/>
+            </svg>
+            <svg class="leaf" viewBox="0 0 15 15">
+                <path d="M7.5,0 Q15,7.5 7.5,15 Q0,7.5 7.5,0" fill="#228B22"/>
+            </svg>
+            <svg class="leaf" viewBox="0 0 15 15">
+                <path d="M7.5,0 Q15,7.5 7.5,15 Q0,7.5 7.5,0" fill="#228B22"/>
+            </svg>
+            
+            <svg id="cat9" viewBox="0 0 50 50" class="clickable">
+                <ellipse cx="25" cy="35" rx="15" ry="12" fill="#FFA500"/>
+                <circle cx="25" cy="16" r="12" fill="#FFA500"/>
+                <polygon points="16,8 13,0 21,5" fill="#FFA500"/>
+                <polygon points="34,8 37,0 29,5" fill="#FFA500"/>
+                <circle cx="21" cy="14" r="2" fill="#333"/>
+                <circle cx="29" cy="14" r="2" fill="#333"/>
+                <ellipse cx="25" cy="20" rx="1.5" ry="1" fill="#FF69B4"/>
+            </svg>
+            
+            <svg id="hand-icon" viewBox="0 0 50 50">
+                <path d="M15,40 L15,20 Q15,15 20,15 L20,10 Q20,5 25,5 L25,10 L30,5 L30,10 L35,5 L35,15 L40,15 Q45,15 45,20 L45,35 Q45,40 40,40 Z" fill="#fff"/>
+            </svg>
+            <div class="long-press-text" id="long-press-text">长按</div>
+            
+            <div class="text-bubble" id="bubble-ending" style="top: 35%; right: 25%;">回来就好，回来就好</div>
+            
+            <div class="ending-screen" id="ending-screen">
+                <svg class="ending-paw" viewBox="0 0 80 80">
+                    <ellipse cx="40" cy="55" rx="25" ry="20" fill="#FF6B6B"/>
+                    <circle cx="20" cy="35" r="8"/>
+                    <circle cx="40" cy="28" r="8"/>
+                    <circle cx="60" cy="35" r="8"/>
+                    <circle cx="30" cy="20" r="6"/>
+                    <circle cx="50" cy="20" r="6"/>
+                </svg>
+                <div class="ending-text">小猫回家了<br>故事结束</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        gsap.registerPlugin(MotionPathPlugin, Draggable, TextPlugin);
+
+        // 全局变量
+        let currentScene = 1;
+        let touchStartY = 0;
+        let touchStartX = 0;
+        let longPressTimer = null;
+        let isLongPress = false;
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initScene1();
+            initButterflyAnimations();
+        });
+
+
+
+        // 场景切换函数
+        function goToScene(sceneNumber) {
+            document.querySelectorAll('.scene').forEach(scene => {
+                scene.classList.remove('active');
+            });
+            document.getElementById(`scene${sceneNumber}`).classList.add('active');
+            currentScene = sceneNumber;
+            
+            // 初始化对应场景
+            if (sceneNumber === 1) initScene1();
+            else if (sceneNumber === 2) initScene2();
+            else if (sceneNumber === 3) initScene3();
+            else if (sceneNumber === 4) initScene4();
+            else if (sceneNumber === 5) initScene5();
+            else if (sceneNumber === 6) initScene6();
+            else if (sceneNumber === 7) initScene7();
+            else if (sceneNumber === 8) initScene8();
+            else if (sceneNumber === 9) initScene9();
+        }
+
+        // Scene 1: 蓝天白云
+        function initScene1() {
+            const butterfly = document.getElementById('butterfly1');
+            const catPaw = document.getElementById('cat-paw');
+            const next1 = document.getElementById('next1');
+            
+            const titleText = document.getElementById('title-text');
+            
+            // 重置状态
+            gsap.set(butterfly, { x: -50, y: window.innerHeight * 0.3 });
+            gsap.set(catPaw, { opacity: 0, scale: 0 });
+            gsap.set(titleText, { opacity: 0 });
+            next1.classList.remove('visible');
+            
+            // 2-3秒后蝴蝶飞入
+            setTimeout(() => {
+                gsap.to(butterfly, {
+                    x: window.innerWidth * 0.3,
+                    y: window.innerHeight * 0.4,
+                    duration: 2,
+                    ease: "power2.out",
+                    onComplete: () => {
+                        // 悬停动画
+                        gsap.to(butterfly, {
+                            y: "-=10",
+                            duration: 1,
+                            repeat: -1,
+                            yoyo: true,
+                            ease: "sine.inOut"
+                        });
+                        
+                        // 监听滑动
+                        let hasSlid = false;
+                        const touchMoveHandler = (e) => {
+                            if (hasSlid) return;
+                            hasSlid = true;
+                            
+                            // 蝴蝶飞向窗户（图片中间位置）
+                            gsap.killTweensOf(butterfly);
+                            gsap.to(butterfly, {
+                                motionPath: {
+                                    path: [
+                                        {x: window.innerWidth * 0.3, y: window.innerHeight * 0.4},
+                                        {x: 800, y: 450},
+                                        {x: 851, y: 502}
+                                    ],
+                                    curviness: 1.5
+                                },
+                                duration: 1.5,
+                                ease: "power2.inOut",
+                                onComplete: () => {
+                                    // 蝴蝶消失在窗户位置
+                                    gsap.to(butterfly, {
+                                        opacity: 0,
+                                        scale: 0.5,
+                                        duration: 0.5,
+                                        onComplete: () => {
+                                            // 蝴蝶消失后显示猫爪印
+                                            gsap.to(catPaw, {
+                                                opacity: 1,
+                                                scale: 1,
+                                                duration: 0.5,
+                                                onComplete: () => {
+                                                    catPaw.classList.add('visible');
+                                                    // 猫爪印出现后显示标题文字（打印机动画）
+                                                    gsap.to(titleText, {
+                                                        opacity: 1,
+                                                        duration: 0.3,
+                                                        onComplete: () => {
+                                                            // 使用GSAP的text属性实现打字机效果
+                                                            gsap.to(titleText, {
+                                                                text: {
+                                                                    value: "猫咪的探险之旅",
+                                                                    delimiter: ""
+                                                                },
+                                                                duration: 1.5,
+                                                                ease: "power1.out"
+                                                            });
+                                                        }
+                                                    });
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                            
+                            document.removeEventListener('touchmove', touchMoveHandler);
+                            document.removeEventListener('mousemove', touchMoveHandler);
+                        };
+                        
+                        document.addEventListener('touchmove', touchMoveHandler, { once: true });
+                        document.addEventListener('mousemove', touchMoveHandler, { once: true });
+                    }
+                });
+            }, 2500);
+            
+            // 猫爪印点击事件
+            catPaw.addEventListener('click', () => {
+                goToScene(2);
+            });
+        }
+
+        // Scene 2: 客厅
+        let butterflyHoverInterval2;
+        
+        function initScene2() {
+            const cat = document.getElementById('cat2');
+            const butterfly = document.getElementById('butterfly2');
+            const next2 = document.getElementById('next2');
+            
+            // 重置状态
+            gsap.set(cat, { scale: 1, x: 0, y: 0, pointerEvents: 'none' });
+            gsap.set(butterfly, { x: 0, y: 0, opacity: 1 });
+            next2.classList.remove('visible');
+            
+            // 蝴蝶初始飞到第一个位置
+            gsap.to(butterfly, {
+                left: '67.2%',
+                top: '56.3%',
+                duration: 2,
+                ease: "sine.inOut",
+                onComplete: () => {
+                    // 启用小猫点击
+                    gsap.set(cat, { pointerEvents: 'auto' });
+                    // 悬停动画
+                    butterflyHoverInterval2 = setInterval(() => {
+                        gsap.to(butterfly, {
+                            y: "-=5",
+                            duration: 0.5,
+                            ease: "sine.inOut",
+                            onComplete: () => {
+                                gsap.to(butterfly, {
+                                    y: 0,
+                                    duration: 0.5,
+                                    ease: "sine.inOut"
+                                });
+                            }
+                        });
+                    }, 500);
+                }
+            });
+            
+            // 小猫点击事件
+            cat.addEventListener('click', () => {
+                // 停止蝴蝶悬停动画
+                clearInterval(butterflyHoverInterval2);
+                gsap.killTweensOf(butterfly);
+                gsap.set(butterfly, { y: 0 });
+                
+                // 小猫第一次移动
+                gsap.to(cat, {
+                    left: '24.0%',
+                    top: '64.9%',
+                    duration: 0.5,
+                    ease: "power2.out",
+                    onComplete: () => {
+                        // 切换小猫图片为catrun1.png
+                        cat.src = 'images/catrun1.png';
+                        
+                        // 蝴蝶飞向新位置
+                        gsap.to(butterfly, {
+                            left: '39.0%',
+                            top: '42.3%',
+                            duration: 0.8,
+                            ease: "power2.in"
+                        });
+                        
+                        // 小猫第二次移动
+                        setTimeout(() => {
+                            gsap.to(cat, {
+                                left: '35.6%',
+                                top: '60.6%',
+                                duration: 0.6,
+                                ease: "power2.out",
+                                onComplete: () => {
+                                    // 切换小猫图片为catpre.png
+                                    cat.src = 'images/cat_ct.png';
+                                    
+                                    // 蝴蝶先消失
+                                    gsap.to(butterfly, {
+                                        opacity: 0,
+                                        duration: 0.5,
+                                        onComplete: () => {
+                                            // 2秒后小猫消失
+                                            setTimeout(() => {
+                                                gsap.to(cat, {
+                                                    opacity: 0,
+                                                    duration: 0.5,
+                                                    onComplete: () => {
+                                                        // 画面淡出
+                                                        gsap.to('#scene2 .living-room', {
+                                                            opacity: 0,
+                                                            duration: 1,
+                                                            onComplete: () => {
+                                                                // 2秒后解锁下一页
+                                                                setTimeout(() => {
+                                                                    next2.classList.add('visible');
+                                                                    // 播放风声（这里用文字提示代替）
+                                                                }, 2000);
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                            }, 2000);
+                                        }
+                                    });
+                                }
+                            });
+                        }, 300);
+                    }
+                });
+            });
+            
+            // 下一页箭头
+            next2.addEventListener('click', () => {
+                goToScene(3);
+            });
+        }
+
+        // Scene 3: 草地
+        function initScene3() {
+            const catMain = document.getElementById('cat-main');
+            const tail = document.getElementById('tabby-tail');
+            const tabbyCat = document.getElementById('tabby-cat');
+            const ball = document.getElementById('ball');
+            const dragArrow = document.getElementById('drag-arrow3');
+            const next3 = document.getElementById('next3');
+            
+            // 重置状态
+            gsap.set(tail, { opacity: 1 });
+            gsap.set(tabbyCat, { opacity: 0, x: 50 });
+            gsap.set(ball, { opacity: 0 });
+            gsap.set(catMain, { opacity: 1 });
+            dragArrow.classList.remove('visible');
+            next3.classList.remove('visible');
+            ball.classList.remove('visible');
+            
+            // 尾巴点击事件
+            tail.addEventListener('click', () => {
+                // 尾巴消失，右边小猫走出
+                gsap.to(tail, {
+                    opacity: 0,
+                    duration: 0.3,
+                    onComplete: () => {
+                        gsap.to(tabbyCat, {
+                            opacity: 1,
+                            x: 0,
+                            duration: 0.8,
+                            ease: "power2.out",
+                            onComplete: () => {
+                                // 两秒后小球出现
+                                setTimeout(() => {
+                                    ball.classList.add('visible');
+                                    gsap.to(ball, {
+                                        opacity: 1,
+                                        duration: 0.3
+                                    });
+                                    dragArrow.classList.add('visible');
+                                    
+                                    // 初始化拖拽
+                                    Draggable.create(ball, {
+                                        type: "x,y",
+                                        bounds: "#scene3",
+                                        onDragEnd: function() {
+                                            // 拖拽结束后，两只猫替换图片
+                                            dragArrow.classList.remove('visible');
+                                            
+                                            // 左边小猫替换为catrun.png
+                                            catMain.src = 'images/catrun.png';
+                                            
+                                            // 右边小猫替换为shty.png并向左移动30%
+                                            tabbyCat.src = 'images/shty.png';
+                                            gsap.to(tabbyCat, {
+                                                x: -30,
+                                                duration: 0.5,
+                                                ease: "power2.out"
+                                            });
+                                            
+                                            // 左边小猫也向左移动一些
+                                            gsap.to(catMain, {
+                                                x: -10,
+                                                duration: 0.5,
+                                                ease: "power2.out"
+                                            });
+                                            
+                                            // 球从左边滚动出屏幕外
+                                            gsap.to(ball, {
+                                                x: -window.innerWidth - 50,
+                                                rotation: -360,
+                                                duration: 1.5,
+                                                ease: "power2.in",
+                                                onComplete: () => {
+                                                    // 解锁下一页
+                                                    next3.classList.add('visible');
+                                                }
+                                            });
+                                        }
+                                    });
+                                }, 2000);
+                            }
+                        });
+                    }
+                });
+            });
+            
+            // 下一页箭头
+            next3.addEventListener('click', () => {
+                goToScene(4);
+            });
+        }
+
+        // Scene 4: 快递柜
+        function initScene4() {
+            const cat = document.getElementById('cat-floor');
+            const man = document.getElementById('man-phone');
+            const phoneScreen = document.getElementById('phone-screen');
+            const flash = document.getElementById('flash');
+            const saveToast = document.getElementById('save-toast');
+            const guide4 = document.getElementById('guide4');
+            const next4 = document.getElementById('next4');
+            
+            // 重置状态
+            gsap.set(cat, { y: 0 });
+            gsap.set(phoneScreen, { scale: 0, opacity: 0 });
+            gsap.set(flash, { opacity: 0 });
+            gsap.set(saveToast, { opacity: 0 });
+            guide4.classList.add('visible');
+            next4.classList.remove('visible');
+            
+            let catJumped = false;
+            
+            // 滑动小猫上柜顶
+            const touchStartHandler = (e) => {
+                touchStartY = e.touches ? e.touches[0].clientY : e.clientY;
+            };
+            
+            const touchMoveHandler = (e) => {
+                if (catJumped) return;
+                
+                const currentY = e.touches ? e.touches[0].clientY : e.clientY;
+                const deltaY = touchStartY - currentY;
+                
+                if (deltaY > 100) {
+                    catJumped = true;
+                    guide4.classList.remove('visible');
+                    
+                    // 小猫跳跃动画
+                    gsap.to(cat, {
+                        y: -window.innerHeight * 0.35,
+                        duration: 0.8,
+                        ease: "power2.out",
+                        onComplete: () => {
+                            // 替换小猫图片为catstair1.png
+                            cat.src = 'images/catstair1.png';
+                            // 可以点击男人了
+                            man.style.pointerEvents = 'auto';
+                        }
+                    });
+                    
+                    document.removeEventListener('touchstart', touchStartHandler);
+                    document.removeEventListener('touchmove', touchMoveHandler);
+                }
+            };
+            
+            document.addEventListener('touchstart', touchStartHandler);
+            document.addEventListener('touchmove', touchMoveHandler);
+            
+            // 男人点击事件
+            man.addEventListener('click', () => {
+                // 放大手机屏幕
+                gsap.to(phoneScreen, {
+                    scale: 1,
+                    opacity: 1,
+                    duration: 0.5,
+                    ease: "back.out(1.7)",
+                    onComplete: () => {
+                        phoneScreen.classList.add('visible');
+                    }
+                });
+            });
+            
+            // 手机屏幕点击事件（拍照）
+            phoneScreen.addEventListener('click', () => {
+                // 闪光效果
+                gsap.to(flash, {
+                    opacity: 1,
+                    duration: 0.1,
+                    onComplete: () => {
+                        gsap.to(flash, {
+                            opacity: 0,
+                            duration: 0.1
+                        });
+                    }
+                });
+                
+                // 显示保存提示
+                setTimeout(() => {
+                    gsap.to(saveToast, {
+                        opacity: 1,
+                        duration: 0.3,
+                        onComplete: () => {
+                            setTimeout(() => {
+                                gsap.to(saveToast, {
+                                    opacity: 0,
+                                    duration: 0.3
+                                });
+                                
+                                // 关闭手机屏幕
+                                gsap.to(phoneScreen, {
+                                    scale: 0,
+                                    opacity: 0,
+                                    duration: 0.3,
+                                    onComplete: () => {
+                                        phoneScreen.classList.remove('visible');
+                                        // 解锁下一页
+                                        next4.classList.add('visible');
+                                    }
+                                });
+                            }, 1500);
+                        }
+                    });
+                }, 200);
+            });
+            
+            // 下一页箭头
+            next4.addEventListener('click', () => {
+                goToScene(5);
+            });
+        }
+
+        // Scene 5: 公园秋千
+        function initScene5() {
+            const bush = document.getElementById('bush');
+            const feeder = document.getElementById('feeder');
+            const cat = document.getElementById('cat5');
+            const foodProgress = document.getElementById('food-progress');
+            const foodBar = document.getElementById('food-bar');
+            const guide5 = document.getElementById('guide5');
+            const next5 = document.getElementById('next5');
+            
+            // 重置状态
+            gsap.set(bush, { opacity: 1 });
+            gsap.set(feeder, { opacity: 0, scale: 0 });
+            gsap.set(cat, { x: 0 });
+            gsap.set(foodProgress, { opacity: 0 });
+            gsap.set(foodBar, { width: '100%' });
+            guide5.classList.add('visible');
+            next5.classList.remove('visible');
+            
+            let feederRevealed = false;
+            let catMoved = false;
+            let feeding = false;
+            
+            // 草丛点击事件
+            bush.addEventListener('click', () => {
+                if (feederRevealed) return;
+                feederRevealed = true;
+                guide5.classList.remove('visible');
+                
+                // 草丛消失，喂猫器出现
+                gsap.to(bush, {
+                    autoAlpha: 0,
+                    duration: 0.5,
+                    onComplete: () => {
+                        gsap.to(feeder, {
+                            autoAlpha: 1,
+                            scale: 1,
+                            duration: 0.5,
+                            ease: "back.out(1.7)"
+                        });
+                    }
+                });
+            });
+            
+            // 滑动小猫到喂猫器前
+            const touchStartHandler = (e) => {
+                if (!feederRevealed || catMoved) return;
+                touchStartX = e.touches ? e.touches[0].clientX : e.clientX;
+            };
+            
+            const touchMoveHandler = (e) => {
+                if (!feederRevealed || catMoved) return;
+                
+                const currentX = e.touches ? e.touches[0].clientX : e.clientX;
+                const deltaX = currentX - touchStartX;
+                
+                if (deltaX > 50) {
+                    catMoved = true;
+                    
+                    // 小猫移动到喂猫器前
+                    gsap.to(cat, {
+                        x: window.innerWidth * 0.5,
+                        duration: 0.8,
+                        ease: "power2.out"
+                    });
+                    
+                    document.removeEventListener('touchstart', touchStartHandler);
+                    document.removeEventListener('touchmove', touchMoveHandler);
+                }
+            };
+            
+            document.addEventListener('touchstart', touchStartHandler);
+            document.addEventListener('touchmove', touchMoveHandler);
+            
+            // 喂猫器点击事件
+            feeder.addEventListener('click', () => {
+                if (!catMoved || feeding) return;
+                feeding = true;
+                
+                // 显示食物进度条
+                gsap.to(foodProgress, {
+                    opacity: 1,
+                    duration: 0.3
+                });
+                
+                // 小猫低头吃食
+                gsap.to(cat, {
+                    scaleY: 0.8,
+                    transformOrigin: "bottom center",
+                    duration: 0.3,
+                    repeat: -1,
+                    yoyo: true,
+                    ease: "sine.inOut"
+                });
+                
+                // 食物减少动画
+                let foodWidth = 100;
+                const foodInterval = setInterval(() => {
+                    foodWidth -= 2;
+                    foodBar.style.width = `${foodWidth}%`;
+                    
+                    if (foodWidth <= 0) {
+                        clearInterval(foodInterval);
+                        
+                        // 停止吃食动画
+                        gsap.killTweensOf(cat);
+                        gsap.to(cat, {
+                            scaleY: 1,
+                            duration: 0.3
+                        });
+                        
+                        // 隐藏进度条
+                        gsap.to(foodProgress, {
+                            opacity: 0,
+                            duration: 0.3
+                        });
+                        
+                        // 解锁下一页
+                        next5.classList.add('visible');
+                    }
+                }, 100);
+            });
+            
+            // 下一页箭头
+            next5.addEventListener('click', () => {
+                goToScene(6);
+            });
+        }
+
+        // Scene 6: 房间夕阳
+        function initScene6() {
+            const owner = document.getElementById('owner');
+            const bubbleMimi = document.getElementById('bubble-mimi');
+            const bubbleNoResponse = document.getElementById('bubble-no-response');
+            const window6 = document.getElementById('window6');
+            const pawPrint = document.getElementById('paw-print-window');
+            const guide6 = document.getElementById('guide6');
+            const next6 = document.getElementById('next6');
+            
+            // 重置状态
+            gsap.set(bubbleMimi, { opacity: 0, scale: 0 });
+            gsap.set(bubbleNoResponse, { opacity: 0, scale: 0 });
+            gsap.set(pawPrint, { opacity: 0 });
+            gsap.set(guide6, { opacity: 0 });
+            next6.classList.remove('visible');
+            
+            let ownerCalled = false;
+            let windowClicked = false;
+            
+            // 主人点击事件
+            owner.addEventListener('click', () => {
+                if (ownerCalled) return;
+                ownerCalled = true;
+                
+                // 显示"咪咪"气泡
+                gsap.to(bubbleMimi, {
+                    opacity: 1,
+                    scale: 1,
+                    duration: 0.5,
+                    onComplete: () => {
+                        // 2秒后显示"没有回应"
+                        setTimeout(() => {
+                            gsap.to(bubbleMimi, {
+                                opacity: 0,
+                                duration: 0.3
+                            });
+                            
+                            gsap.to(bubbleNoResponse, {
+                                opacity: 1,
+                                scale: 1,
+                                duration: 0.5,
+                                onComplete: () => {
+                                    // 2秒后消失，显示窗户箭头
+                                    setTimeout(() => {
+                                        gsap.to(bubbleNoResponse, {
+                                            opacity: 0,
+                                            duration: 0.3
+                                        });
+                                        
+                                        guide6.classList.add('visible');
+                                    }, 2000);
+                                }
+                            });
+                        }, 2000);
+                    }
+                });
+            });
+            
+            // 窗户点击事件
+            window6.addEventListener('click', () => {
+                if (!ownerCalled || windowClicked) return;
+                windowClicked = true;
+                guide6.classList.remove('visible');
+                
+                // 显示猫爪印
+                gsap.to(pawPrint, {
+                    opacity: 1,
+                    scale: 1.2,
+                    duration: 0.5,
+                    ease: "back.out(1.7)",
+                    onComplete: () => {
+                        gsap.to(pawPrint, {
+                            scale: 1,
+                            duration: 0.3
+                        });
+                        
+                        // 3秒后显示文字
+                        setTimeout(() => {
+                            // 创建文字元素
+                            const text = document.createElement('div');
+                            text.textContent = '小猫溜出去了';
+                            text.style.position = 'absolute';
+                            text.style.top = '50%';
+                            text.style.left = '50%';
+                            text.style.transform = 'translate(-50%, -50%)';
+                            text.style.color = '#fff';
+                            text.style.fontSize = '20px';
+                            text.style.textShadow = '0 0 10px rgba(0,0,0,0.5)';
+                            text.style.opacity = '0';
+                            text.style.zIndex = '20';
+                            document.getElementById('scene6').appendChild(text);
+                            
+                            gsap.to(text, {
+                                opacity: 1,
+                                duration: 0.5,
+                                onComplete: () => {
+                                    // 解锁下一页
+                                    next6.classList.add('visible');
+                                }
+                            });
+                        }, 3000);
+                    }
+                });
+            });
+            
+            // 下一页箭头
+            next6.addEventListener('click', () => {
+                goToScene(7);
+            });
+        }
+
+        // Scene 7: 寻猫启事
+        function initScene7() {
+            const deliveryMan = document.getElementById('delivery-man');
+            const chatScreen = document.getElementById('chat-screen');
+            const msg1 = document.getElementById('msg1');
+            const msg2 = document.getElementById('msg2');
+            const next7 = document.getElementById('next7');
+            
+            // 重置状态
+            gsap.set(chatScreen, { scale: 0, opacity: 0 });
+            gsap.set(msg1, { opacity: 0, y: 20 });
+            gsap.set(msg2, { opacity: 0, y: 20 });
+            next7.classList.remove('visible');
+            
+            let chatOpened = false;
+            let messagesSent = false;
+            
+            // 快递员点击事件
+            deliveryMan.addEventListener('click', () => {
+                if (chatOpened) return;
+                chatOpened = true;
+                
+                // 放大聊天界面
+                gsap.to(chatScreen, {
+                    scale: 1,
+                    opacity: 1,
+                    duration: 0.5,
+                    ease: "back.out(1.7)",
+                    onComplete: () => {
+                        chatScreen.classList.add('visible');
+                        
+                        // 逐条显示消息
+                        setTimeout(() => {
+                            gsap.to(msg1, {
+                                opacity: 1,
+                                y: 0,
+                                duration: 0.5,
+                                onComplete: () => {
+                                    setTimeout(() => {
+                                        gsap.to(msg2, {
+                                            opacity: 1,
+                                            y: 0,
+                                            duration: 0.5,
+                                            onComplete: () => {
+                                                messagesSent = true;
+                                            }
+                                        });
+                                    }, 3000);
+                                }
+                            });
+                        }, 500);
+                    }
+                });
+            });
+            
+            // 聊天界面点击事件
+            chatScreen.addEventListener('click', () => {
+                if (!messagesSent) return;
+                
+                // 关闭聊天界面
+                gsap.to(chatScreen, {
+                    scale: 0,
+                    opacity: 0,
+                    duration: 0.3,
+                    onComplete: () => {
+                        chatScreen.classList.remove('visible');
+                        // 解锁下一页
+                        next7.classList.add('visible');
+                    }
+                });
+            });
+            
+            // 下一页箭头
+            next7.addEventListener('click', () => {
+                goToScene(8);
+            });
+        }
+
+        // Scene 8: 楼道
+        function initScene8() {
+            const cat = document.getElementById('cat8');
+            const ownerView = document.getElementById('owner-view');
+            const bubbleMeow = document.getElementById('bubble-meow');
+            const rightArrow = document.getElementById('right-arrow');
+            const owner8 = document.getElementById('owner8');
+            const guide8 = document.getElementById('guide8');
+            const next8 = document.getElementById('next8');
+            
+            // 重置状态
+            gsap.set(cat, { y: 0 });
+            gsap.set(ownerView, { opacity: 0 });
+            gsap.set(bubbleMeow, { opacity: 0, scale: 0 });
+            gsap.set(rightArrow, { opacity: 0 });
+            gsap.set(owner8, { opacity: 0 });
+            guide8.classList.add('visible');
+            next8.classList.remove('visible');
+            
+            let catClimbed = false;
+            let viewShown = false;
+            let ownerRevealed = false;
+            
+            // 向上滑动小猫
+            const touchStartHandler = (e) => {
+                if (catClimbed) return;
+                touchStartY = e.touches ? e.touches[0].clientY : e.clientY;
+            };
+            
+            const touchMoveHandler = (e) => {
+                if (catClimbed) return;
+                
+                const currentY = e.touches ? e.touches[0].clientY : e.clientY;
+                const deltaY = touchStartY - currentY;
+                
+                if (deltaY > 150) {
+                    catClimbed = true;
+                    guide8.classList.remove('visible');
+                    
+                    // 小猫向上移动
+                    gsap.to(cat, {
+                        y: -window.innerHeight * 0.3,
+                        duration: 1.5,
+                        ease: "power2.out",
+                        onComplete: () => {
+                            // 切换到主人视角
+                            gsap.to(ownerView, {
+                                opacity: 1,
+                                duration: 0.8,
+                                onComplete: () => {
+                                    ownerView.classList.add('visible');
+                                    viewShown = true;
+                                    
+                                    // 显示"喵"气泡
+                                    setTimeout(() => {
+                                        gsap.to(bubbleMeow, {
+                                            opacity: 1,
+                                            scale: 1,
+                                            duration: 0.5,
+                                            onComplete: () => {
+                                                // 显示向右箭头
+                                                setTimeout(() => {
+                                                    rightArrow.classList.add('visible');
+                                                }, 1000);
+                                            }
+                                        });
+                                    }, 500);
+                                }
+                            });
+                        }
+                    });
+                    
+                    document.removeEventListener('touchstart', touchStartHandler);
+                    document.removeEventListener('touchmove', touchMoveHandler);
+                }
+            };
+            
+            document.addEventListener('touchstart', touchStartHandler);
+            document.addEventListener('touchmove', touchMoveHandler);
+            
+            // 向右箭头点击事件
+            rightArrow.addEventListener('click', () => {
+                if (!viewShown || ownerRevealed) return;
+                ownerRevealed = true;
+                
+                // 隐藏气泡和箭头
+                gsap.to([bubbleMeow, rightArrow], {
+                    opacity: 0,
+                    duration: 0.3
+                });
+                
+                // 显示主人和小猫相遇
+                gsap.to(ownerView, {
+                    opacity: 0,
+                    duration: 0.5,
+                    onComplete: () => {
+                        ownerView.classList.remove('visible');
+                        
+                        // 显示主人
+                        gsap.to(owner8, {
+                            opacity: 1,
+                            duration: 0.5
+                        });
+                        
+                        // 小猫移动到主人身边
+                        gsap.to(cat, {
+                            x: window.innerWidth * 0.4,
+                            duration: 0.8,
+                            ease: "power2.out"
+                        });
+                    }
+                });
+            });
+            
+            // 滑动抱起小猫
+            const touchStartHandler2 = (e) => {
+                if (!ownerRevealed) return;
+                touchStartY = e.touches ? e.touches[0].clientY : e.clientY;
+                touchStartX = e.touches ? e.touches[0].clientX : e.clientX;
+            };
+            
+            const touchMoveHandler2 = (e) => {
+                if (!ownerRevealed || next8.classList.contains('visible')) return;
+                
+                const currentY = e.touches ? e.touches[0].clientY : e.clientY;
+                const currentX = e.touches ? e.touches[0].clientX : e.clientX;
+                const deltaY = touchStartY - currentY;
+                const deltaX = currentX - touchStartX;
+                
+                if (deltaY > 80 || deltaX > 80) {
+                    // 主人弯腰抱起小猫
+                    gsap.to(owner8, {
+                        scaleY: 0.8,
+                        transformOrigin: "bottom center",
+                        duration: 0.5,
+                        onComplete: () => {
+                            // 小猫消失（被抱起）
+                            gsap.to(cat, {
+                                opacity: 0,
+                                duration: 0.3
+                            });
+                            
+                            // 主人站直
+                            gsap.to(owner8, {
+                                scaleY: 1,
+                                duration: 0.5,
+                                onComplete: () => {
+                                    // 解锁下一页
+                                    next8.classList.add('visible');
+                                }
+                            });
+                        }
+                    });
+                    
+                    document.removeEventListener('touchstart', touchStartHandler2);
+                    document.removeEventListener('touchmove', touchMoveHandler2);
+                }
+            };
+            
+            document.addEventListener('touchstart', touchStartHandler2);
+            document.addEventListener('touchmove', touchMoveHandler2);
+            
+            // 下一页箭头
+            next8.addEventListener('click', () => {
+                goToScene(9);
+            });
+        }
+
+        // Scene 9: 温馨结局
+        function initScene9() {
+            const cat = document.getElementById('cat9');
+            const leaves = document.querySelectorAll('#scene9 .leaf');
+            const handIcon = document.getElementById('hand-icon');
+            const longPressText = document.getElementById('long-press-text');
+            const ownerArm = document.getElementById('owner-arm');
+            const bubbleEnding = document.getElementById('bubble-ending');
+            const endingScreen = document.getElementById('ending-screen');
+            
+            // 重置状态
+            gsap.set(cat, { x: 0, y: 0 });
+            gsap.set(leaves, { opacity: 1 });
+            gsap.set(handIcon, { opacity: 0 });
+            gsap.set(longPressText, { opacity: 0 });
+            gsap.set(ownerArm, { opacity: 0, rotation: 0 });
+            gsap.set(bubbleEnding, { opacity: 0, scale: 0 });
+            gsap.set(endingScreen, { opacity: 0 });
+            
+            let catHasLeaf = false;
+            let catOnKnee = false;
+            let petting = false;
+            
+            // 小猫点击事件（叼树叶）
+            cat.addEventListener('click', () => {
+                if (catHasLeaf) return;
+                catHasLeaf = true;
+                
+                // 小猫叼起一片树叶
+                const leaf = leaves[0];
+                gsap.to(leaf, {
+                    opacity: 0,
+                    duration: 0.3
+                });
+                
+                // 小猫低头抬头动画
+                gsap.to(cat, {
+                    scaleY: 0.8,
+                    transformOrigin: "bottom center",
+                    duration: 0.3,
+                    yoyo: true,
+                    repeat: 1,
+                    onComplete: () => {
+                        // 小猫跳上主人膝盖
+                        gsap.to(cat, {
+                            x: window.innerWidth * 0.55,
+                            y: -window.innerHeight * 0.15,
+                            duration: 0.6,
+                            ease: "power2.out",
+                            onComplete: () => {
+                                catOnKnee = true;
+                                
+                                // 显示长按提示
+                                setTimeout(() => {
+                                    handIcon.classList.add('visible');
+                                    longPressText.classList.add('visible');
+                                }, 500);
+                            }
+                        });
+                    }
+                });
+            });
+            
+            // 长按手图标事件
+            handIcon.addEventListener('touchstart', () => {
+                if (!catOnKnee || petting) return;
+                
+                longPressTimer = setTimeout(() => {
+                    isLongPress = true;
+                    petting = true;
+                    
+                    // 隐藏提示
+                    handIcon.classList.remove('visible');
+                    longPressText.classList.remove('visible');
+                    
+                    // 显示主人手臂并开始抚摸
+                    gsap.to(ownerArm, {
+                        opacity: 1,
+                        duration: 0.3,
+                        onComplete: () => {
+                            // 抚摸动画
+                            gsap.to(ownerArm, {
+                                rotation: 20,
+                                duration: 0.5,
+                                repeat: -1,
+                                yoyo: true,
+                                ease: "sine.inOut"
+                            });
+                            
+                            // 显示文字气泡
+                            setTimeout(() => {
+                                gsap.to(bubbleEnding, {
+                                    opacity: 1,
+                                    scale: 1,
+                                    duration: 0.5,
+                                    onComplete: () => {
+                                        // 2秒后气泡消失，显示结局
+                                        setTimeout(() => {
+                                            gsap.to(bubbleEnding, {
+                                                opacity: 0,
+                                                duration: 0.3
+                                            });
+                                            
+                                            gsap.to(ownerArm, {
+                                                opacity: 0,
+                                                duration: 0.3,
+                                                onComplete: () => {
+                                                    gsap.killTweensOf(ownerArm);
+                                                }
+                                            });
+                                            
+                                            // 显示结局画面
+                                            setTimeout(() => {
+                                                gsap.to(endingScreen, {
+                                                    opacity: 1,
+                                                    duration: 1
+                                                });
+                                            }, 500);
+                                        }, 2000);
+                                    }
+                                });
+                            }, 1000);
+                        }
+                    });
+                }, 1000);
+            });
+            
+            handIcon.addEventListener('touchend', () => {
+                if (!isLongPress) {
+                    clearTimeout(longPressTimer);
+                }
+            });
+            
+            // 鼠标版本的长按
+            handIcon.addEventListener('mousedown', () => {
+                if (!catOnKnee || petting) return;
+                
+                longPressTimer = setTimeout(() => {
+                    isLongPress = true;
+                    petting = true;
+                    
+                    // 隐藏提示
+                    handIcon.classList.remove('visible');
+                    longPressText.classList.remove('visible');
+                    
+                    // 显示主人手臂并开始抚摸
+                    gsap.to(ownerArm, {
+                        opacity: 1,
+                        duration: 0.3,
+                        onComplete: () => {
+                            // 抚摸动画
+                            gsap.to(ownerArm, {
+                                rotation: 20,
+                                duration: 0.5,
+                                repeat: -1,
+                                yoyo: true,
+                                ease: "sine.inOut"
+                            });
+                            
+                            // 显示文字气泡
+                            setTimeout(() => {
+                                gsap.to(bubbleEnding, {
+                                    opacity: 1,
+                                    scale: 1,
+                                    duration: 0.5,
+                                    onComplete: () => {
+                                        // 2秒后气泡消失，显示结局
+                                        setTimeout(() => {
+                                            gsap.to(bubbleEnding, {
+                                                opacity: 0,
+                                                duration: 0.3
+                                            });
+                                            
+                                            gsap.to(ownerArm, {
+                                                opacity: 0,
+                                                duration: 0.3,
+                                                onComplete: () => {
+                                                    gsap.killTweensOf(ownerArm);
+                                                }
+                                            });
+                                            
+                                            // 显示结局画面
+                                            setTimeout(() => {
+                                                gsap.to(endingScreen, {
+                                                    opacity: 1,
+                                                    duration: 1
+                                                });
+                                            }, 500);
+                                        }, 2000);
+                                    }
+                                });
+                            }, 1000);
+                        }
+                    });
+                }, 1000);
+            });
+            
+            handIcon.addEventListener('mouseup', () => {
+                if (!isLongPress) {
+                    clearTimeout(longPressTimer);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
