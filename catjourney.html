@@ -1015,7 +1015,9 @@
             
             <img id="cat9" src="images/catsit1.png" alt="cat9" class="clickable" />
             
-            <div class="text-bubble" id="bubble-ending" style="top: 35%; right: 25%; background: url('images/chatk1.png') center/contain no-repeat; padding: 25px 90px; font-size: 20px; font-family: 'FZYaoTi', 'Noto Sans SC', sans-serif;">回来就好，回来就好</div>
+            <div class="text-bubble" id="bubble-ending1" style="top: 35%; right: 25%; background: url('images/chatk1.png') center/contain no-repeat; padding: 25px 50px; font-size: 20px; font-family: 'FZYaoTi', 'Noto Sans SC', sans-serif;">回来就好，</div>
+            
+            <div class="text-bubble" id="bubble-ending2" style="top: 35%; right: 25%; background: url('images/chatk1.png') center/contain no-repeat; padding: 25px 40px; font-size: 20px; font-family: 'FZYaoTi', 'Noto Sans SC', sans-serif;">回来就好！</div>
             
             <div class="ending-screen" id="ending-screen">
                 <svg class="ending-paw" viewBox="0 0 80 80">
@@ -2006,7 +2008,8 @@
             const cat = document.getElementById('cat9');
             const leaves = document.querySelectorAll('#scene9 .leaf');
             const owner9 = document.getElementById('owner9');
-            const bubbleEnding = document.getElementById('bubble-ending');
+            const bubbleEnding1 = document.getElementById('bubble-ending1');
+            const bubbleEnding2 = document.getElementById('bubble-ending2');
             const endingScreen = document.getElementById('ending-screen');
             const guideLeaf9 = document.getElementById('guide-leaf9');
             
@@ -2018,7 +2021,8 @@
             gsap.set(leaves, { opacity: 1 });
             gsap.set(owner9, { opacity: 1 });
             owner9.src = 'images/master6.png';
-            gsap.set(bubbleEnding, { opacity: 0, scale: 0 });
+            gsap.set(bubbleEnding1, { opacity: 0, scale: 0 });
+            gsap.set(bubbleEnding2, { opacity: 0, scale: 0 });
             gsap.set(endingScreen, { opacity: 0 });
             guideLeaf9.classList.add('visible');
             
@@ -2051,8 +2055,10 @@
                 if (catOnKnee) return;
                 catOnKnee = true;
                 
-                // 主人同时切换为master4.png
+                // 主人同时切换为master4.png，宽度保持一致
                 owner9.src = 'images/master4.png';
+                owner9.style.width = '120px';
+                owner9.style.height = '240px';
                 
                 // 小猫移动到人物膝盖位置（再往左边挪10%），变为catlie.png
                 gsap.to(cat, {
@@ -2080,28 +2086,45 @@
                 // 主人切换为master7.png
                 owner9.src = 'images/master7.png';
                 
-                // 显示文字气泡
+                // 显示第一个文字气泡"回来就好，"
                 setTimeout(() => {
-                    gsap.to(bubbleEnding, {
+                    gsap.to(bubbleEnding1, {
                         opacity: 1,
                         scale: 1,
                         duration: 0.5,
                         onComplete: () => {
-                            // 2秒后气泡消失，显示结局
+                            // 1秒后第一个气泡消失
                             setTimeout(() => {
-                                gsap.to(bubbleEnding, {
+                                gsap.to(bubbleEnding1, {
                                     opacity: 0,
-                                    duration: 0.3
+                                    duration: 0.3,
+                                    onComplete: () => {
+                                        // 第二个文字气泡"回来就好！"出现
+                                        gsap.to(bubbleEnding2, {
+                                            opacity: 1,
+                                            scale: 1,
+                                            duration: 0.5,
+                                            onComplete: () => {
+                                                // 1秒后第二个气泡消失，显示结局
+                                                setTimeout(() => {
+                                                    gsap.to(bubbleEnding2, {
+                                                        opacity: 0,
+                                                        duration: 0.3
+                                                    });
+                                                    
+                                                    // 显示结局画面
+                                                    setTimeout(() => {
+                                                        gsap.to(endingScreen, {
+                                                            opacity: 1,
+                                                            duration: 1
+                                                        });
+                                                    }, 500);
+                                                }, 1000);
+                                            }
+                                        });
+                                    }
                                 });
-                                
-                                // 显示结局画面
-                                setTimeout(() => {
-                                    gsap.to(endingScreen, {
-                                        opacity: 1,
-                                        duration: 1
-                                    });
-                                }, 500);
-                            }, 2000);
+                            }, 1000);
                         }
                     });
                 }, 1000);
