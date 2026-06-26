@@ -204,6 +204,11 @@
             scale: 1,
         }
 
+        #guide-cat2 {
+            bottom: 20%;
+            left: 11%;
+        }
+
         #butterfly2 {
             position: absolute;
             top: 77.9%;
@@ -311,6 +316,11 @@
             width: 120px;
             height: 200px;
             cursor: pointer;
+        }
+
+        #guide-man4 {
+            bottom: 30%;
+            right: 25%;
         }
 
         #expressage {
@@ -421,6 +431,11 @@
             cursor: pointer;
         }
 
+        #guide-feeder5 {
+            bottom: 22%;
+            right: 28%;
+        }
+
         @keyframes bounce {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
@@ -523,6 +538,11 @@
             cursor: pointer;
         }
 
+        #guide-delivery7 {
+            bottom: 25%;
+            right: 25%;
+        }
+
         #chat-screen {
             position: absolute;
             top: 50%;
@@ -565,9 +585,18 @@
             display: inline-block;
         }
 
+        .message.sent {
+            text-align: right;
+        }
+
+        .message.received {
+            text-align: left;
+        }
+
         #msg1 .message-image {
-            width: 20%;
-            height: 10%;
+            margin-top: 30px;
+            width: 30%;
+            height: 30%;
             right: 90%;
         }
 
@@ -581,7 +610,7 @@
         }
 
         #msg4 .message-image {
-            width: 60%;
+            width: 70%;
             right: 1%;
         }
 
@@ -670,6 +699,14 @@
             z-index: 30;
         }
 
+        #guide-owner8 {
+            bottom: 25%;
+            right: 45%;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 35;
+        }
+
         #stair-overlay {
             position: absolute;
             top: 0;
@@ -694,15 +731,30 @@
             right: 20%;
             width: 120px;
             height: 240px;
+            cursor: pointer;
         }
 
         #cat9 {
             position: absolute;
             bottom: 18%;
             left: 12%;
-            width:90px;
+            width:80px;
             height: auto;
             cursor: pointer;
+        }
+
+        #guide-cat9 {
+            bottom: 28%;
+            left: 15%;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #guide-owner9 {
+            bottom: 25%;
+            right: 35%;
+            opacity: 0;
+            pointer-events: none;
         }
 
         .leaf {
@@ -854,6 +906,8 @@
                 <img id="cat2" src="images/catback.png" alt="cat" class="clickable" />
                 
                 <img id="butterfly2" src="images/butterfly2.png" alt="butterfly" />
+                
+                <div class="guide-arrow" id="guide-cat2">→ 点击小猫</div>
             </div>
             
             <div class="next-arrow" id="next2">↓</div>
@@ -891,6 +945,8 @@
             
             <img id="man-phone" src="images/delivery.png" alt="delivery" class="clickable" />
             
+            <div class="guide-arrow" id="guide-man4">← 点击男人</div>
+            
             <img id="expressage" src="images/expressage.png" alt="expressage" />
             
             <div id="phone-screen">
@@ -918,6 +974,8 @@
             <div id="target-arrow5" style="display: none; position: absolute; bottom: 19%; right: 12%; font-size: 40px; color: #FFD700; font-family: 'STXinwei', 'Microsoft YaHei', sans-serif; animation: bounce 1s infinite;">↓</div>
             
             <img id="feeder5" src="images/weimq.png" alt="feeder5s" class="clickable" />
+            
+            <div class="guide-arrow" id="guide-feeder5">→ 点击喂猫器</div>
             
             <div class="next-arrow" id="next5">↓</div>
         </div>
@@ -962,18 +1020,20 @@
             
             <img id="delivery-man" src="images/delivery.png" alt="delivery-man" class="clickable" />
             
+            <div class="guide-arrow" id="guide-delivery7">← 点击男人</div>
+            
             <div id="chat-screen">
                 <div class="chat-messages">
-                    <div class="message received" id="msg1">
+                    <div class="message sent" id="msg1">
                         <img src="images/chat.png" alt="chat" class="message-image" />
                     </div>
                     <div class="message sent" id="msg2">
                         <img src="images/chat1.png" alt="chat1" class="message-image" />
                     </div>
-                    <div class="message received" id="msg3">
+                    <div class="message sent" id="msg3">
                         <img src="images/chat3.png" alt="chat3" class="message-image" />
                     </div>
-                    <div class="message sent" id="msg4">
+                    <div class="message received" id="msg4">
                         <img src="images/chat2.png" alt="chat2" class="message-image" />
                     </div>
                     <div class="message received" id="msg5">
@@ -998,6 +1058,8 @@
             
             <img id="owner8" src="images/master2.png" alt="owner8" />
             
+            <div class="guide-arrow" id="guide-owner8">→ 点击主人</div>
+            
             <div class="guide-arrow" id="guide8" style="bottom: 25%; left: 25%;">↑ 向上滑动</div>
             
             <div class="next-arrow" id="next8">↓</div>
@@ -1014,6 +1076,10 @@
             <div class="guide-arrow" id="guide-leaf9" style="bottom: 22%; left: 42%;">→ 点击树叶</div>
             
             <img id="cat9" src="images/catsit1.png" alt="cat9" class="clickable" />
+            
+            <div class="guide-arrow" id="guide-cat9">↓ 点击小猫</div>
+            
+            <div class="guide-arrow" id="guide-owner9">→ 点击主人</div>
             
             <div class="text-bubble" id="bubble-ending1" style="top: 35%; right: 25%; background: url('images/chatk1.png') center/contain no-repeat; padding: 25px 50px; font-size: 20px; font-family: 'FZYaoTi', 'Noto Sans SC', sans-serif;">回来就好，</div>
             
@@ -1180,11 +1246,13 @@
             const cat = document.getElementById('cat2');
             const butterfly = document.getElementById('butterfly2');
             const next2 = document.getElementById('next2');
+            const guideCat2 = document.getElementById('guide-cat2');
             
             // 重置状态
             gsap.set(cat, { scale: 1, x: 0, y: 0, pointerEvents: 'none' });
             gsap.set(butterfly, { x: 0, y: 0, opacity: 1 });
             next2.classList.remove('visible');
+            guideCat2.classList.add('visible');
             
             // 蝴蝶初始飞到第一个位置
             gsap.to(butterfly, {
@@ -1215,6 +1283,9 @@
             
             // 小猫点击事件
             cat.addEventListener('click', () => {
+                // 隐藏提示箭头
+                guideCat2.classList.remove('visible');
+                
                 // 停止蝴蝶悬停动画
                 clearInterval(butterflyHoverInterval2);
                 gsap.killTweensOf(butterfly);
@@ -1392,6 +1463,7 @@
             const flash = document.getElementById('flash');
             const saveToast = document.getElementById('save-toast');
             const guide4 = document.getElementById('guide4');
+            const guideMan4 = document.getElementById('guide-man4');
             const next4 = document.getElementById('next4');
             
             // 重置状态
@@ -1400,6 +1472,7 @@
             gsap.set(flash, { opacity: 0 });
             gsap.set(saveToast, { opacity: 0 });
             guide4.classList.add('visible');
+            guideMan4.classList.remove('visible');
             next4.classList.remove('visible');
             
             let catJumped = false;
@@ -1429,6 +1502,8 @@
                             cat.src = 'images/catstair1.png';
                             // 可以点击男人了
                             man.style.pointerEvents = 'auto';
+                            // 显示"点击男人"提示箭头
+                            guideMan4.classList.add('visible');
                         }
                     });
                     
@@ -1442,6 +1517,9 @@
             
             // 男人点击事件
             man.addEventListener('click', () => {
+                // 隐藏提示箭头
+                guideMan4.classList.remove('visible');
+                
                 // 放大手机屏幕
                 gsap.to(phoneScreen, {
                     scale: 1,
@@ -1511,6 +1589,7 @@
             const dragArrow5 = document.getElementById('drag-arrow5');
             const targetArrow5 = document.getElementById('target-arrow5');
             const feeder5 = document.getElementById('feeder5');
+            const guideFeeder5 = document.getElementById('guide-feeder5');
             const next5 = document.getElementById('next5');
             
             // 重置状态
@@ -1520,6 +1599,7 @@
             dragArrow5.style.display = 'none';
             targetArrow5.style.display = 'none';
             feeder5.style.display = 'none';
+            guideFeeder5.classList.remove('visible');
             guide5.classList.add('visible');
             next5.classList.remove('visible');
             
@@ -1571,7 +1651,11 @@
                                         gsap.to(feeder5, {
                                             opacity: 1,
                                             duration: 0.5,
-                                            ease: "back.out(1.7)"
+                                            ease: "back.out(1.7)",
+                                            onComplete: () => {
+                                                // 显示"点击喂猫器"提示箭头
+                                                guideFeeder5.classList.add('visible');
+                                            }
                                         });
                                     }, 1000);
                                 }
@@ -1585,6 +1669,9 @@
             feeder5.addEventListener('click', () => {
                 if (!catDragged || feederClicked) return;
                 feederClicked = true;
+                
+                // 隐藏提示箭头
+                guideFeeder5.classList.remove('visible');
                 
                 // 小猫切换图片为catbd1.png
                 cat.src = 'images/catbd1.png';
@@ -1743,6 +1830,7 @@
             const msg3 = document.getElementById('msg3');
             const msg4 = document.getElementById('msg4');
             const msg5 = document.getElementById('msg5');
+            const guideDelivery7 = document.getElementById('guide-delivery7');
             const next7 = document.getElementById('next7');
             
             // 重置状态
@@ -1753,6 +1841,7 @@
             gsap.set(msg4, { opacity: 0, y: 20 });
             gsap.set(msg5, { opacity: 0, y: 20 });
             next7.classList.remove('visible');
+            guideDelivery7.classList.add('visible');
             
             let chatOpened = false;
             let messagesSent = false;
@@ -1762,12 +1851,16 @@
                 if (chatOpened) return;
                 chatOpened = true;
                 
+                // 隐藏提示箭头
+                guideDelivery7.classList.remove('visible');
+                
                 // 放大聊天界面
                 gsap.to(chatScreen, {
                     scale: 1,
                     opacity: 1,
                     duration: 0.5,
                     ease: "back.out(1.7)",
+                    force3D: false,
                     onComplete: () => {
                         chatScreen.classList.add('visible');
                         
@@ -1854,6 +1947,7 @@
             const owner8 = document.getElementById('owner8');
             const stairOverlay = document.getElementById('stair-overlay');
             const guide8 = document.getElementById('guide8');
+            const guideOwner8 = document.getElementById('guide-owner8');
             const next8 = document.getElementById('next8');
             
             // 重置状态
@@ -1866,6 +1960,7 @@
             gsap.set(rightArrow, { opacity: 0 });
             gsap.set(owner8, { opacity: 0 });
             gsap.set(stairOverlay, { opacity: 0 });
+            gsap.set(guideOwner8, { opacity: 0 });
             owner8.src = 'images/master2.png';
             guide8.classList.add('visible');
             next8.classList.remove('visible');
@@ -1972,6 +2067,11 @@
                             duration: 0.5,
                             onComplete: () => {
                                 owner8.style.pointerEvents = 'auto';
+                                // 显示"点击主人"提示箭头
+                                gsap.to(guideOwner8, {
+                                    opacity: 1,
+                                    duration: 0.3
+                                });
                             }
                         });
                     }
@@ -1981,6 +2081,12 @@
             // 点击主人事件
             owner8.addEventListener('click', () => {
                 if (!ownerRevealed) return;
+                
+                // 隐藏提示箭头
+                gsap.to(guideOwner8, {
+                    opacity: 0,
+                    duration: 0.3
+                });
                 
                 // 小猫消失
                 gsap.to(cat, {
@@ -2012,6 +2118,8 @@
             const bubbleEnding2 = document.getElementById('bubble-ending2');
             const endingScreen = document.getElementById('ending-screen');
             const guideLeaf9 = document.getElementById('guide-leaf9');
+            const guideCat9 = document.getElementById('guide-cat9');
+            const guideOwner9 = document.getElementById('guide-owner9');
             
             // 重置状态
             cat.src = 'images/catsit1.png';
@@ -2024,6 +2132,8 @@
             gsap.set(bubbleEnding1, { opacity: 0, scale: 0 });
             gsap.set(bubbleEnding2, { opacity: 0, scale: 0 });
             gsap.set(endingScreen, { opacity: 0 });
+            gsap.set(guideCat9, { opacity: 0 });
+            gsap.set(guideOwner9, { opacity: 0 });
             guideLeaf9.classList.add('visible');
             
             let catHasLeaf = false;
@@ -2045,22 +2155,41 @@
                     // 小猫替换为catleaf.png
                     cat.src = 'images/catleaf.png';
                     
-                    // 隐藏提示
+                    // 主人同时切换为master5.png
+                    owner9.src = 'images/master5.png';
+                    owner9.style.width = '120px';
+                    owner9.style.height = '240px';
+                    
+                    // 隐藏提示，显示"点击小猫"箭头
                     guideLeaf9.classList.remove('visible');
+                    gsap.to(guideCat9, {
+                        opacity: 1,
+                        duration: 0.3
+                    });
                 });
             });
             
             // 小猫点击事件
             cat.addEventListener('click', () => {
-                if (catOnKnee) return;
+                if (catOnKnee || !catHasLeaf) return;
                 catOnKnee = true;
                 
-                // 主人同时切换为master4.png，宽度保持一致
-                owner9.src = 'images/master4.png';
-                owner9.style.width = '120px';
-                owner9.style.height = '240px';
+                // 隐藏"点击小猫"箭头，显示"点击主人"箭头
+                gsap.to(guideCat9, {
+                    opacity: 0,
+                    duration: 0.3
+                });
+                gsap.to(guideOwner9, {
+                    opacity: 1,
+                    duration: 0.3
+                });
                 
-                // 小猫移动到人物膝盖位置（再往左边挪10%），变为catlie.png
+                // 主人切换为master4.png，宽度保持一致
+                owner9.src = 'images/master4.png';
+                owner9.style.width = '190px';
+                owner9.style.height = '290px';
+                
+                // 小猫移动到沙发上，变为catlie.png
                 gsap.to(cat, {
                     x: window.innerWidth * 0.45,
                     y: window.innerHeight * 0.15,
@@ -2077,6 +2206,12 @@
                 if (!catOnKnee || ownerClicked) return;
                 ownerClicked = true;
                 
+                // 隐藏"点击主人"箭头
+                gsap.to(guideOwner9, {
+                    opacity: 0,
+                    duration: 0.3
+                });
+                
                 // 小猫消失
                 gsap.to(cat, {
                     opacity: 0,
@@ -2085,7 +2220,8 @@
                 
                 // 主人切换为master7.png
                 owner9.src = 'images/master7.png';
-                
+                owner9.style.width = '120px';
+                owner9.style.height = '240px';
                 // 显示第一个文字气泡"回来就好，"
                 setTimeout(() => {
                     gsap.to(bubbleEnding1, {
